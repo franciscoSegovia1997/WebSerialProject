@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block pageContent %}
+    <div id="app">
+    </div>
+
+    <script type="text/babel" src="{% static 'components/App.js' %}"></script>
+
+    <script type="text/babel">
+        const root = ReactDOM.createRoot(document.querySelector('#app'))
+        root.render(<App />)
+    </script>
+{% endblock %}
