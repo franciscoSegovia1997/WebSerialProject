@@ -104,7 +104,6 @@ function Usuarios()
     }
 
     const crearUsuario = () => {
-
         const usuarioData = {
             nombreUsuario: state.nombreUsuario,
             apellidoUsuario: state.apellidoUsuario,

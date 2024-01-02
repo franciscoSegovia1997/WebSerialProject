@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 import json
-from .models import usuarioSistema, dispositivoSistema
+from .models import usuarioSistema, dispositivoSistema, registroSistema, datoSistema
 
 # Create your views here.
 def index(request):
@@ -67,3 +67,44 @@ def crearDispositivo(request):
         return JsonResponse({
             'resp':'ok'
         })
+
+def crearRegistro(request):
+    if request.method == 'POST':
+        registros = json.load(request)
+        registroActual = registroSistema.objects.create()
+        codigoRegistro = str(registroActual.id)
+        while len(codigoRegistro) < 4:
+            codigoRegistro = '0' + codigoRegistro
+        codigoRegistro = 'REG-' + codigoRegistro
+        registroActual.codigoRegistro = codigoRegistro
+        registroActual.save()
+        for registro in registros:
+            datoSistema.objects.create(
+                valorDato=str(registro),
+                registroDato=registroActual
+            )
+        return JsonResponse({
+            'resp':'ok'
+        })
+    
+def consultarRegistros(request):
+    registrosTotales = registroSistema.objects.all().order_by('id')
+    registrosSistema = []
+    for registroInfo in registrosTotales:
+        registrosSistema.append({
+            'id':registroInfo.id,
+            'codigoRegistro':registroInfo.codigoRegistro,
+        })
+    return JsonResponse({
+        'registrosSistema':registrosSistema
+    })
+
+def conseguirDatos(request,idRegistro):
+    registroInfo = registroSistema.objects.get(id=idRegistro)
+    valoresTotales = registroInfo.datosistema_set.all()
+    arregloValores = []
+    for valorInfo in valoresTotales:
+        arregloValores.append(valorInfo.valorDato)
+    return JsonResponse({
+        'arregloValores':arregloValores
+    })
